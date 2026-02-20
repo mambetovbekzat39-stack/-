@@ -207,11 +207,55 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
         }
         .leaflet-draw-toolbar a {
-            width: 48px !important; height: 48px !important;
+            width: 52px !important; height: 52px !important;
             background: rgba(15,30,17,0.93) !important;
             border-bottom: 1px solid var(--border) !important;
-            background-size: 26px 26px !important;
+            background-size: 0 0 !important; /* hide default sprite */
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 22px !important;
+            text-decoration: none !important;
+            transition: background 0.18s, transform 0.15s !important;
         }
+        .leaflet-draw-toolbar a:hover {
+            background: rgba(57,224,107,0.15) !important;
+        }
+        .leaflet-draw-toolbar a:active {
+            transform: scale(0.92) !important;
+        }
+
+        /* Hide the sr-only text visually but keep accessible */
+        .leaflet-draw-toolbar a .sr-only {
+            position: absolute !important;
+            width: 1px !important; height: 1px !important;
+            overflow: hidden !important;
+            clip: rect(0,0,0,0) !important;
+        }
+
+        /* Inject emoji icons via pseudo-elements */
+        .leaflet-draw-draw-polygon::after {
+            content: '✏️';
+            font-size: 22px;
+            line-height: 1;
+        }
+        .leaflet-draw-edit-edit::after {
+            content: '🖊️';
+            font-size: 22px;
+            line-height: 1;
+        }
+        .leaflet-draw-edit-remove::after {
+            content: '🗑️';
+            font-size: 22px;
+            line-height: 1;
+        }
+
+        /* Active drawing state — glow green */
+        .leaflet-draw-toolbar a.leaflet-draw-toolbar-button-enabled {
+            background: rgba(57,224,107,0.18) !important;
+            box-shadow: 0 0 0 2px var(--green) inset !important;
+        }
+
         .leaflet-top.leaflet-right {
             top: calc(var(--safe-top) + 68px) !important;
         }
@@ -268,6 +312,8 @@
         .ndvi-legend-title { color: var(--text-dim); margin-bottom: 8px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; }
         .legend-row { display: flex; align-items: center; gap: 8px; margin: 5px 0; color: var(--text); }
         .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+
 
         /* ── BOTTOM PANEL ── */
         .bottom-panel {
@@ -649,6 +695,8 @@
         <button class="layer-btn active" id="btnSatellite" onclick="switchLayer('satellite')">🛰 Спутник</button>
         <button class="layer-btn" id="btnStreet" onclick="switchLayer('street')">🗺 Карта</button>
     </div>
+
+
   
     <!-- NDVI legend -->
     <div class="ndvi-legend" id="ndviLegend">
@@ -798,6 +846,10 @@
   
     let currentPolygon = null;
     let analysisData = null;
+
+    // ── QUICK ACTIONS ──
+    window.qaAction = function(step) {};
+    function setQaActive(step) {}
   
     map.on(L.Draw.Event.CREATED, function(e) {
         drawnItems.clearLayers();
